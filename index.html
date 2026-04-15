@@ -2,20 +2,43 @@
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
-    <title>Hello Coimbra</title>
+    <title>Página Básica com CI/CD</title>
 </head>
 <body style="font-family: Arial, sans-serif; background-color: #e0e0e0; padding: 20px;">
 
     <div style="background-color: white; padding: 20px; border: 1px solid #999;">
-        <h1>Olá, Coimbra!</h1>
-        <p>Bem-vindo!</p>
+        <h1>Olá, Mundo!</h1> 
+        <p>Esta é uma página que documenta o nosso projeto.</p>
 
-        <h2>O que ver em Coimbra:</h2>
-        <ul>
-            <li>Universidade de Coimbra</li>
-            <li>Mosteiro de Santa Cruz</li>
-            <li>Quinta das Lágrimas</li>
-        </ul>
+        <h2>Pipeline de CI/CD</h2>
+        <p>Sempre que fazemos um <em>push</em> para o branch 'main', este é o processo que corre no GitHub Actions para validar a mensagem do commit e construir a imagem Docker:</p>
+
+        <pre style="background-color: #2b2b2b; color: #f8f8f2; padding: 15px; border-radius: 5px; overflow-x: auto;"><code>name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [prod]
+
+jobs:
+  validate-commit:
+    name: Validate commit message
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate commit message
+        run: |
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          echo "Commit message: $COMMIT_MSG"
+          if ! echo "$COMMIT_MSG" | grep -qE "^(feat|fix|ci|test|refactor|build): .+"; then
+            echo "ERROR: Commit message must follow Conventional Commits format"
+            exit 1
+          fi
+          echo "Commit message is valid"</code></pre>
+
+        <p>A nossa pipelina valida se o commit começa pelas seguintes tags: feat | fix | ci | test | refactor | build </p>
+
     </div>
 
 </body>
