@@ -15,11 +15,9 @@ jobs:
       - name: Validate commit message
         run: |
           COMMIT_MSG=$(git log -1 --pretty=%B)
-          echo "Commit message: $COMMIT_MSG"
-          if ! echo "$COMMIT_MSG" | grep -qE "^(feat|fix|ci|test|refactor|build): .+"; then
+          if ! echo "$COMMIT_MSG" | grep -E "^(feat|fix|ci|test|refactor|build): .+"; then
             echo "ERROR: Commit message must follow Conventional Commits format"
-            echo "Example: feat: add new feature"
-            echo "Valid prefixes: feat, fix, docs, ci, test, chore, refactor, style, build"
+            echo "Valid prefixes: feat, fix, ci, test, refactor, build"
             exit 1
           fi
           echo "Commit message is valid"
@@ -33,17 +31,17 @@ jobs:
       packages: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v7
         with:
           context: .
           push: true
